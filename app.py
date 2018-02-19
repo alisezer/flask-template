@@ -12,4 +12,3 @@ def deploy():
     """Run deployment tasks"""
     # Migrate database to latest revision
     upgrade()
-

@@ -1,6 +1,5 @@
 from logging.handlers import RotatingFileHandler
 from logging import StreamHandler
-from config import Config
 from pathlib import Path
 import logging
 import os
@@ -24,10 +23,10 @@ logger_formatter = logging.Formatter(log_fmt)
 # Sets up rotating file handler for file output
 file_logger = RotatingFileHandler(log_file_path, maxBytes=1024*1024*10,
                                   backupCount=5)
-file_logger.setLevel("DEBUG")
+file_logger.setLevel(logging.DEBUG)
 file_logger.setFormatter(logger_formatter)
 
 # Set up stream handler for client output
 client_logger = StreamHandler()
-client_logger.setLevel(logging.DEBUG)
+client_logger.setLevel(logging.INFO)
 client_logger.setFormatter(logger_formatter)
