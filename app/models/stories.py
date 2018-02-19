@@ -1,4 +1,3 @@
-from app.exceptions import ValidationError
 from datetime import datetime
 from app import db
 import logging
@@ -46,7 +45,15 @@ class Story(db.Model):
 
     @staticmethod
     def from_json(json_post):
-        body = json_post.get('body')
-        if body is None or body == '':
-            raise ValidationError('post does not have a body')
-        return Story(body=body)
+        title = json_post.get('title')
+        topic = json_post.get('topic')
+        text = json_post.get('text')
+        author = json_post.get('author')
+
+        story = Story(
+            title=title,
+            topic=topic,
+            text=text,
+            author=author
+        )
+        return story
