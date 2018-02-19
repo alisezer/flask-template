@@ -10,7 +10,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     # API configurations
     SECRET_KEY = env_conf("SECRET_KEY")
-    # DEBUG = True
+    DEBUG = True
 
     # Database configurations
     SQLALCHEMY_TRACK_MODIFICATIONS = False
