@@ -11,7 +11,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 
-def create_app(config_key):
+def create_app(config_key='docker'):
     app = Flask(__name__)
     app.config.from_object(config_dict[config_key])
     config_dict[config_key].init_app(app)

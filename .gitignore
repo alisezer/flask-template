@@ -82,4 +82,4 @@ fabric.properties
 /.vscode
 
 # Logs
-/logs
+*.out

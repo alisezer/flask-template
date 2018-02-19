@@ -23,7 +23,7 @@ class Config:
 
 class PostgreConfig(Config):
     DB_USER = env_conf('DATABASE_USER')
-    DB_PASSWORD = env_conf('DATABASE_HOST')
+    DB_PASSWORD = env_conf('DATABASE_PASS')
     DB_HOST = env_conf('DATABASE_HOST')
     DB_PORT = env_conf('DATABASE_PORT')
     DB_NAME = env_conf('DATABASE_NAME')
@@ -31,9 +31,9 @@ class PostgreConfig(Config):
         format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 
 
-class SQLiteConfig(Config):
-    SQLALCHEMY_DATABASE_URI = env_conf('DEV_DATABASE_URL') or \
-            'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+# class SQLiteConfig(Config):
+#     SQLALCHEMY_DATABASE_URI = env_conf('DEV_DATABASE_URL') or \
+#             'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 
 class DockerConfig(PostgreConfig):
