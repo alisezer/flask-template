@@ -14,10 +14,14 @@ from app import db
 from app.models.stories import Story
 
 
+@main.route('/', methods=['GET', 'POST'])
+def index():
+    stories = Story.query.all()
+    return render_template('main_page.html', stories=stories)
 
 
 @main.route('/create-story', methods=['GET', 'POST'])
-def index():
+def create_story():
     form = StoryForm()
     if form.validate_on_submit():
         story = Story(
