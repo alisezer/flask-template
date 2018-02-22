@@ -1,0 +1,20 @@
+version: '3'
+services:
+  stories:
+    build: .
+    ports:
+      - "8000:5000"
+    env_file: .env
+    restart: always
+    links:
+      - postgres:dbserver
+  postgres:
+    image: postgres:9.6
+    environment:
+      - POSTGRES_USER=tester
+      - POSTGRES_PASSWORD=testing
+      - POSTGRES_DB=ftemplate
+    env_file:
+      - .env
+    ports:
+      - "5443:5432"
