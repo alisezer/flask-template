@@ -9,8 +9,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     # API configurations
-    SECRET_KEY = env_conf("SECRET_KEY")ftemplate
-
+    SECRET_KEY = env_conf("SECRET_KEY")
     # Database configurations
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_RECORD_QUERIES = True
@@ -30,12 +29,21 @@ class PostgreConfig(Config):
         format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 
 
-# class SQLiteConfig(Config):
-#     SQLALCHEMY_DATABASE_URI = env_conf('DEV_DATABASE_URL') or \
-#             'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
+class SQLiteConfig(Config):
+    SQLALCHEMY_DATABASE_URI = \
+        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
 
-class DockerConfig(PostgreConfig):
+class DockerPSQLConfig(PostgreConfig):
+    @classmethod
+    def init_app(cls, app):
+        PostgreConfig.init_app(app)
+        app.logger.setLevel(logging.DEBUG)
+        app.logger.addHandler(file_logger)
+        app.logger.addHandler(client_logger)
+
+
+class DockerSQLiteConfig(SQLiteConfig):
     @classmethod
     def init_app(cls, app):
         PostgreConfig.init_app(app)
@@ -45,5 +53,6 @@ class DockerConfig(PostgreConfig):
 
 
 config_dict = {
-    'docker': DockerConfig
+    'docker-psql': DockerPSQLConfig,
+    'docker-sqlite': DockerSQLiteConfig
 }

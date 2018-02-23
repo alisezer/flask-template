@@ -1,13 +1,10 @@
-FROM ubuntu:latest
+FROM python:3.6-alpine
 
 ENV FLASK_APP stories.py
-ENV FLASK_CONFIG docker
+ENV FLASK_CONFIG docker-sqlite
 
-# RUN adduser -D stories
-# USER stories
-
-RUN apt-get update -y
-RUN apt-get install -y python-pip python-dev build-essential
+RUN adduser -D stories
+USER stories
 
 WORKDIR /home/stories
 
