@@ -53,6 +53,6 @@ class DockerSQLiteConfig(SQLiteConfig):
 
 
 config_dict = {
-    'docker-psql': DockerPSQLConfig,
+    'docker': DockerPSQLConfig,
     'docker-sqlite': DockerSQLiteConfig
 }
