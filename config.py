@@ -1,10 +1,6 @@
 from app.utils.logging import file_logger, client_logger
 from decouple import config as env_conf
 import logging
-import os
-
-
-basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
@@ -29,21 +25,7 @@ class PostgreConfig(Config):
         format(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME)
 
 
-class SQLiteConfig(Config):
-    SQLALCHEMY_DATABASE_URI = \
-        'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-
-
 class DockerPSQLConfig(PostgreConfig):
-    @classmethod
-    def init_app(cls, app):
-        PostgreConfig.init_app(app)
-        app.logger.setLevel(logging.DEBUG)
-        app.logger.addHandler(file_logger)
-        app.logger.addHandler(client_logger)
-
-
-class DockerSQLiteConfig(SQLiteConfig):
     @classmethod
     def init_app(cls, app):
         PostgreConfig.init_app(app)
@@ -54,5 +36,25 @@ class DockerSQLiteConfig(SQLiteConfig):
 
 config_dict = {
     'docker': DockerPSQLConfig,
-    'docker-sqlite': DockerSQLiteConfig
+    # 'docker-sqlite': DockerSQLiteConfig
 }
+
+
+# TODO: marked for removal
+
+# import os
+
+# basedir = os.path.abspath(os.path.dirname(__file__))
+
+# class SQLiteConfig(Config):
+#     SQLALCHEMY_DATABASE_URI = \
+#         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+
+
+# class DockerSQLiteConfig(SQLiteConfig):
+#     @classmethod
+#     def init_app(cls, app):
+#         PostgreConfig.init_app(app)
+#         app.logger.setLevel(logging.DEBUG)
+#         app.logger.addHandler(file_logger)
+#         app.logger.addHandler(client_logger)
