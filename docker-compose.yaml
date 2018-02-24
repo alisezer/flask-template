@@ -8,22 +8,21 @@ services:
       - db
     volumes:
       - ./:/usr/local/src/stories/
-    # command: >
-    #          bash -c "/usr/local/bin/gunicorn
-    #          --reload -w 2 -b :8000 stories:app"
-
+    command: bash -c "flask deploy &&
+             /usr/local/bin/gunicorn
+             --reload -w 2 -b :8000 stories:app"
   db:
-    image: postgres:9.6
+    image: postgres:10
     environment:
-      - POSTGRES_USER=tester
-      - POSTGRES_PASSWORD=testing
+      - POSTGRES_USER=deploy
+      - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=ftemplate
+    volumes:
+      - ./postgres-data/postgres:/var/lib/postgresql/data
     env_file:
       - .env
     ports:
-      - "5443:5432"
-    command: >
-            bash -c "./boot.sh"
+      - "5442:5432"
   nginx:
     build:
       context: .
