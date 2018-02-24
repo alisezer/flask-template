@@ -1,20 +1,36 @@
-version: '3'
+version: '2'
 services:
-  stories:
+  api:
     build: .
     ports:
-      - "8000:5000"
-    env_file: .env
-    restart: always
-    links:
-      - postgres:dbserver
-  postgres:
-    image: postgres:9.6
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./:/usr/local/src/stories/
+    command: bash -c "flask deploy &&
+             /usr/local/bin/gunicorn
+             --reload -w 2 -b :8000 stories:app"
+  db:
+    image: postgres:10
     environment:
-      - POSTGRES_USER=tester
-      - POSTGRES_PASSWORD=testing
+      - POSTGRES_USER=deploy
+      - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=ftemplate
+    volumes:
+      - ./postgres-data/postgres:/var/lib/postgresql/data
     env_file:
       - .env
     ports:
-      - "5443:5432"
+      - "5442:5432"
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/df.nginx
+    ports:
+      - "80:80"
+    restart: always
+    depends_on:
+      - api
+
+
