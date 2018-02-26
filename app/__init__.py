@@ -12,8 +12,15 @@ from flask import Flask
 from config import config_dict
 
 # Setup
+
+# We iniate the database and other packages that are going to play together
+# with the app here
+
+# For the database
 db = SQLAlchemy()
+# For database migrations
 migrate = Migrate()
+# For HTML bootstrapping
 bootstrap = Bootstrap()
 
 
