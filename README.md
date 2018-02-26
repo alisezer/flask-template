@@ -3,17 +3,17 @@ This is a basic template which can be used for creating flask based APPs and API
 
 The project creates a basic app for creating and viewing short stories. These stories can be viewed, created and edited throuh API endpoints, and through a very basic web page.
 
-The idea is to have a similar structure ready whenever a quick flask app needs to be created. The project structure can be used for scaling for bigger projects as well.
+The idea is to have a ready project structure whenever a quick flask app needs to be created. The project structure can be used for scaling for bigger projects as well.
 
 
 ## Virtual Environment Setup
 
-The project uses python3.6. In order to get started, you can set up a virtual env with:
+The project uses Python3.6. In order to get started, you can set up a virtual env with:
 ```
 virtualenv venv -p python3.6
 ```
 
-This will create a python3.6 based virtualenv for you. Note: You need to have [Python3.6](https://www.python.org/downloads/release/python-360/) insatlled on your local device.
+This will create a python3.6 based virtualenv for you. Note: You need to have [Python3.6](https://www.python.org/downloads/release/python-360/) installed on your local device.
 
 To install the necessary packages:
 ```
@@ -45,7 +45,7 @@ Variables in the .env file and their meanings:
 - Databse configurations: these are used for configuring your postgresql database
 - SECRET_KEY: Flask's secret key which is used for hashing and security purposes. Make sure to keep this secret and don't commit to github.
 
-The configurations are carried to code through the decouple library, which IMO provides a better solution compared to the traditional python-dotenv library.
+The configurations are carried to code through the `decouple` library, which IMO provides a better solution compared to the traditional `python-dotenv` library.
 
 
 ## Project Structure
@@ -60,11 +60,11 @@ The `stories.py` module relies on the `config.py` and the `app/__init__.py` modu
 `config.py` hold multiple configuration files, which can be used in different scenarios such as testing vs production.
 
 ### Models
-The models, which are your databse objects, are handled through SQLAlchemy's ORM. Flask provides a wrapper around the traditional SQLAlchemy package, which is used through out this project.
+The models, which are your database objects, are handled through SQLAlchemy's ORM. Flask provides a wrapper around the traditional SQLAlchemy package, which is used through out this project.
 
 The models created are similar to your regular Python classes. They are inherited from prespecified SQLAlchemy classes to make database table creation processes easier. These models can be found under the `app/models` folder.
 
-In some projects, models can be handled within only one module, however in my opinion, it makes things easier to handle them in multiple modules (one module per model).
+In some projects, models can be handled within only one module, however in my opinion, it makes things easier when you handle them in multiple modules (one module per model).
 
 If you want to create more models in your application, you can simply create modules under this folder, and later on tie them back to your app.
 
@@ -76,7 +76,7 @@ The project creates a simple API which has 4 endpoints for retrieving, creating 
 
 The blueprint object is later on imported and tied to the app in the `app/__init__.py` module.
 
-### Main APP (Web PAge)
+### Main APP (Web Page)
 The project also creates a very simple web page for viewing and creating stories. The flow for this logic is handled under the `app/main` folder. `forms.py` basically creates a very simple web form for creating a story, while the views handled in the `views.py` module.
 
 Like the API, the web page relies on a blueprint, which is iniated in the `__init__.py` module.
@@ -99,7 +99,7 @@ Keeping this in mind, even though the project is quiet small, I went the extra m
 Python uses `psycopg2` driver to connect to postgre databases. It quiet easy to install psycopg2 on Linux OS, however you may need to get Homebrew on your Mac to make your installation easier for you.
 
 ### Setting up a Postgre Database
-Assuming that you have installed postgre database (if you haven't [Homebrew](https://gist.github.com/sgnl/609557ebacd3378f3b72) is the way I prefer for installations on Mac, and with [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04), its even easier), you easily setup a database through your terminal.
+Assuming that you have installed postgre database (if you haven't [Homebrew](https://gist.github.com/sgnl/609557ebacd3378f3b72) is the way I prefer for installations on Mac, and with [Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04), its even easier), you can easily setup a database through your terminal.
 
 After reaching the postgres terminal through a `PSQL` command such as
 ```
@@ -130,7 +130,7 @@ This should do it with the database setup!
 
 ### Migrations
 
-Database migrations is handled through Flask's Migrate Package, which provides a wrapper with Alembic. Migrations are done for updating and creating necessary tables/entries in your database. Flask provides a neat way of handling these.
+Database migrations is handled through Flask's Migrate Package, which provides a wrapper around Alembic. Migrations are done for updating and creating necessary tables/entries in your database. Flask provides a neat way of handling these.
 
 After exporting your flask CLI to point towards your application (for example in this case it can be done with):
 ```
@@ -144,7 +144,7 @@ Initially, if you were to create an app from scratch, you would need to initiate
 ```
 flask db init
 ```
-In this case migrations folder is already there. So you won't have to initate it. This folder can be used when in the future, you start altering your models. For example when you add or remove fields.
+In this case migrations folder is already there. So you won't have to initate it. This folder can be used when in the future, once you start altering your models. For example when you add or remove fields or create new models.
 
 For generating new migrations, you can use:
 ```
@@ -183,14 +183,14 @@ The project also has docker functionality, which means you can run it using Dock
 
 Docker creates containers for you, and basically serves your application using these containers. The necessary setting files for the docker setup can be found under `docker-compose.yaml` and `Dockerfile` it self.
 
-In this case, docker uses a prebuilt Python3.6 image that runs on Ubuntu, and creates Nginx and Postgres containers to serve the application.
+In this case, docker uses a prebuilt Python3.6 image that runs on Ubuntu, and creates Nginx reverse proxy and Postgres databse containers to serve the application.
 
 To build the docker image, simply run:
 ```
 sudo docker-compose up --build
 ```
 
-Once its built, it will do the necessary migrations for you application, and your app will be ready to run straigtaway. You do not need to specify the `--build` command a second time to run the docker instance:
+Once its built, it will do the necessary migrations for your application, and your app will be running straigt away. You do not need to specify the `--build` command a second time to run the docker compose instance:
 ```
 sudo docker-compose up
 ```
