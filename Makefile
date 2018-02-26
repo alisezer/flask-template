@@ -1,17 +1,10 @@
 ## Install Python Dependencies
 requirements:
-	pip install -r requirements.txt
+	venv/bin/pip install -r requirements.txt
 
 ## Generate Requirements.txt
 generate-req:
 	venv/bin/pip freeze > requirements.txt
-
-## Complete Setup Including Virtualenv
-setup: venv/bin/activate
-venv/bin/activate: requirements.txt
-	test -d venv || virtualenv venv
-	venv/bin/pip install -Ur requirements.txt
-	touch venv/bin/activate
 
 ## Delete all compiled Python files
 clean: clean-tox clean-build clean-pyc
