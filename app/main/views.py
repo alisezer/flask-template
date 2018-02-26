@@ -1,3 +1,6 @@
+"""This is the views page, which is similar to what the routes do for the API.
+The difference is rather than routes, this renders and displays HTML pages"""
+
 from app.main.forms import StoryForm
 from app.main import main
 from flask import (
@@ -34,5 +37,4 @@ def create_story():
         db.session.commit()
         flash('Story created')
     return render_template('edit_story.html', form=form)
-
 

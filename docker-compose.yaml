@@ -1,5 +1,6 @@
 version: '2'
 services:
+# Container for the application
   api:
     build: .
     ports:
@@ -11,6 +12,7 @@ services:
     command: bash -c "flask deploy &&
              /usr/local/bin/gunicorn
              --reload -w 2 -b :8000 stories:app"
+# Container for the database
   db:
     image: postgres:10
     environment:
@@ -23,6 +25,7 @@ services:
       - .env
     ports:
       - "5442:5432"
+# Container for the nginx reverse proxy
   nginx:
     build:
       context: .

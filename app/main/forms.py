@@ -1,3 +1,5 @@
+"""Create a form for creating stories"""
+
 from wtforms.validators import DataRequired, Length
 from flask_wtf import FlaskForm
 from wtforms import (

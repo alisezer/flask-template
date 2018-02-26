@@ -1,3 +1,7 @@
+"""This is where we defined the Config files, which are used for initiating the
+application with specific settings such as logger configurations or different
+database setups."""
+
 from app.utils.logging import file_logger, client_logger
 from decouple import config as env_conf
 import logging
@@ -16,6 +20,8 @@ class Config:
 
 
 class PostgreConfig(Config):
+    # This configuration is used for setting up a postgre database. The
+    # necessary settings are imported from the .env file.
     DB_USER = env_conf('DATABASE_USER')
     DB_PASSWORD = env_conf('DATABASE_PASS')
     DB_HOST = env_conf('DATABASE_HOST')
@@ -26,35 +32,21 @@ class PostgreConfig(Config):
 
 
 class DockerPSQLConfig(PostgreConfig):
+    # To initate the docker config. Basically adds bunch of logger handlers
     @classmethod
     def init_app(cls, app):
         PostgreConfig.init_app(app)
+        # The default Flask logger level is set at ERROR, so if you want to see
+        # INFO level or DEBUG level logs, you need to lower the main loggers
+        # level first.
         app.logger.setLevel(logging.DEBUG)
         app.logger.addHandler(file_logger)
         app.logger.addHandler(client_logger)
 
 
+# Create a config dictionary which is used while initiating the application.
+# Config that is going to be used will be specified in the .env file
 config_dict = {
+    'postgre': PostgreConfig,
     'docker': DockerPSQLConfig,
-    # 'docker-sqlite': DockerSQLiteConfig
 }
-
-
-# TODO: marked for removal
-
-# import os
-
-# basedir = os.path.abspath(os.path.dirname(__file__))
-
-# class SQLiteConfig(Config):
-#     SQLALCHEMY_DATABASE_URI = \
-#         'sqlite:///' + os.path.join(basedir, 'data.sqlite')
-
-
-# class DockerSQLiteConfig(SQLiteConfig):
-#     @classmethod
-#     def init_app(cls, app):
-#         PostgreConfig.init_app(app)
-#         app.logger.setLevel(logging.DEBUG)
-#         app.logger.addHandler(file_logger)
-#         app.logger.addHandler(client_logger)

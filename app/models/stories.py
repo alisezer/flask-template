@@ -1,14 +1,18 @@
+"""This is an example model which will be used for creating stories on the web.
+The model is defined in a similar way to python class/object, however is
+inherited from a SQLAlchemy class so a DB entry with a table can be built
+easily
+"""
+
 from datetime import datetime
 from app import db
-import logging
-
-
-# Logger Setup
-logger = logging.getLogger(__name__)
 
 
 class Story(db.Model):
+    # Table name which is going to store the stories defined here
     __tablename__ = 'stories'
+
+    # These are the entries that are going to become columns in that table
 
     # Primary Key
     id = db.Column(db.Integer, primary_key=True)
@@ -21,7 +25,12 @@ class Story(db.Model):
     created_at = db.Column(db.DateTime(), default=datetime.utcnow)
 
     def __init__(self, **kwargs):
+        # Helps with class initiation, basically what every attribute you give
+        # at initiaion will become a class attribute with this __init__ method
         super(Story, self).__init__(**kwargs)
+
+    # The to json methods will be used for responding to API queries which are
+    # going to be requesting story information.
 
     def to_full_json(self):
         json_story = {
@@ -43,6 +52,7 @@ class Story(db.Model):
         }
         return json_story
 
+    # This from json method is used for creating a story from a JSON.
     @staticmethod
     def from_json(json_post):
         title = json_post.get('title')

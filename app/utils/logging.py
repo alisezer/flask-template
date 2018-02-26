@@ -1,3 +1,9 @@
+"""Used for creating handlers for the app logger. Two handles are created:
+the first one logs to a file, and is a rotating handler. The second one will
+be the client logger which is what you see on the terminal. Their log levels
+are defined through .env file. These handlers are imported and attached to the
+app during app initiation stage."""
+
 from logging.handlers import RotatingFileHandler
 from logging import StreamHandler
 from pathlib import Path

@@ -1,3 +1,4 @@
+# We build from python3.6 which provides a python3.6 insatlled ubuntu OS.
 FROM python:3.6
 
 # Update ENV
