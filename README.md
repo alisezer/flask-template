@@ -267,4 +267,5 @@ Many thanks to [Jose Rivera-Rubio](https://github.com/jmrr) for his help with th
 ### Todo and Improvements
 
 1. Add tests
-2. Add a create a story button on the main page
+2. Add a create a story button on the main page :white_check_mark:
+3. Add toast after form submission.
