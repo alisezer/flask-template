@@ -240,7 +240,9 @@ Docker creates containers for you, and basically serves your application using t
 
 In this case, docker uses a prebuilt Python3.6 image that runs on Ubuntu, and creates Nginx reverse proxy and Postgres database containers to serve the application.
 
-To build the docker image, simply run:
+To build the docker image, fist, set your `ENV` variable within your `.env` file to `docker`.
+
+And then, run:
 
 ```bash
 sudo docker-compose up --build
@@ -251,6 +253,8 @@ Once its built, it will do the necessary migrations for your application, and yo
 ```bash
 sudo docker-compose up
 ```
+
+**Note: You might encounter some problems while building docker for the first time, or running docker on MAC OSX at the moment. A bug fix will be issued for this soon.**
 
 Docker becomes especially useful while deploying your applications on servers, and makes the DevOps easier. You can read more about [docker](https://www.docker.com/).
 

@@ -24,7 +24,7 @@ migrate = Migrate()
 bootstrap = Bootstrap()
 
 
-def create_app(config_key='docker'):
+def create_app(config_key='local'):
     app = Flask(__name__)
     # Enabling config initiation
     app.config.from_object(config_dict[config_key])
