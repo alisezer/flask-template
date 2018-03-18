@@ -31,7 +31,7 @@ def create_story():
             title=form.title.data,
             topic=form.topic.data,
             text=form.text.data,
-            author=form.text.data
+            author=form.author.data
         )
         db.session.add(story)
         db.session.commit()
