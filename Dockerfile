@@ -18,7 +18,7 @@ COPY app ./app
 COPY migrations ./migrations
 
 # Necessary Files
-COPY .env config.py stories.py boot.sh  ./
+COPY .env config.py stories.py boot.sh gunicorn.ini ./
 RUN chmod +x ./boot.sh
 
 # Expose port
