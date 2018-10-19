@@ -9,4 +9,4 @@ while true; do
     sleep 5
 done
 
-exec gunicorn -b :8000 --access-logfile - --error-logfile - stories:app
+exec gunicorn -c gunicorn.ini stories:app
