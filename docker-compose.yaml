@@ -1,39 +1,59 @@
-version: '2'
+# Docker Compose Version - unrelated to project
+version: "3"
+
+#? Define your services here
 services:
-# Container for the application
-  api:
-    build: .
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-    volumes:
-      - ./:/usr/local/src/stories/
-    command: bash -c "flask deploy &&
-             /usr/local/bin/gunicorn
-             --reload -w 2 -b :8000 stories:app"
-# Container for the database
-  db:
-    image: postgres:10
-    environment:
-      - POSTGRES_USER=deploy
-      - POSTGRES_PASSWORD=docker
-      - POSTGRES_DB=ftemplate
-    volumes:
-      - ./postgres-data/postgres:/var/lib/postgresql/data
-    env_file:
-      - .env
-    ports:
-      - "5442:5432"
-# Container for the nginx reverse proxy
-  nginx:
+
+  #? The reverse proxy
+  proxy:
+    image: stories-nginx-dev
     build:
-      context: .
-      dockerfile: nginx/df.nginx
+      context: ./nginx
+      dockerfile: nginx.Dockerfile
     ports:
       - "80:80"
-    restart: always
+    networks:
+      - subnet
     depends_on:
-      - api
+      - frontend
 
+  #? Stories Application
+  frontend:
+    image: stories-frontend-dev
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      ENV: develop
+    depends_on:
+      - db
+    networks:
+      - subnet
+    volumes:
+      - ./app:/usr/src/stories/app
+      - ./logs:/usr/src/stories/logs
+      - ./migrations:/usr/src/stories/migrations
 
+  #? PostgreSQL database
+  db:
+    image: postgres:10.4
+    restart: always
+    environment:
+      POSTGRES_USER: deploy
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: stories
+    ports:
+     - "5442:5432"
+    networks:
+      - subnet
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+#? Your Networks
+networks:
+  subnet:
+
+#? Your Volumes
+volumes:
+  db_data:
