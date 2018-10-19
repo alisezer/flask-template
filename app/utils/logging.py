@@ -27,8 +27,7 @@ log_fmt = '%(threadName)s - %(asctime)s - %(name)s - ' \
 logger_formatter = logging.Formatter(log_fmt)
 
 # Sets up rotating file handler for file output
-file_logger = RotatingFileHandler(log_file_path, maxBytes=1024*1024*10,
-                                  backupCount=5)
+file_logger = RotatingFileHandler(log_file_path, maxBytes=1024*1024*10,backupCount=5)
 file_logger.setLevel(logging.DEBUG)
 file_logger.setFormatter(logger_formatter)
 
