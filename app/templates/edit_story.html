@@ -1,11 +1,20 @@
-{% import "bootstrap/wtf.html" as wtf %} 
-{% block title %}Stories - Create Story{% endblock %} 
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Create Story{% endblock %}
+
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Create a Story</h1>
-</div>
+    <h1>Create Story</h1>
+  </div>
+
+
 <div class="col-md-4">
     {{ wtf.quick_form(form) }}
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
 {% endblock %}

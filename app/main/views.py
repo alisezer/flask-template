@@ -20,8 +20,7 @@ from app.models.stories import Story
 @main.route('/', methods=['GET', 'POST'])
 def index():
     stories = Story.query.all()
-    return render_template('main_page.html', stories=stories)
-
+    return render_template('index.html', stories=stories)
 
 @main.route('/create-story', methods=['GET', 'POST'])
 def create_story():
@@ -36,5 +35,5 @@ def create_story():
         db.session.add(story)
         db.session.commit()
         flash('Story created')
+        return redirect(url_for('main.index'))
     return render_template('edit_story.html', form=form)
-

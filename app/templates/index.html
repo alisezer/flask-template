@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+<title>{% block title %}STORIES{% endblock %}</title>
+
+{% block page_content %}
+
+<div class="page-header">
+  <h1>Stories</h1>
+</div>
+
+
+<div class="container">
+    <ul class="stories">
+        {% for story in stories %}
+        <li class="stories">
+            <div class="story-content">
+                <div class="story-title">
+                    <h3>{{story.title}}</h3>
+                    <p>Topic: {{story.topic}}</p>
+                    <p>Author: {{story.author}}</p>
+                    <p>Created At: {{story.created_at}}</p>
+                    <p>>>>{{story.text}}</p>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+
+{% endblock %}
