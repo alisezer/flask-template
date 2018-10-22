@@ -21,7 +21,7 @@ The following guide provides insights on how the bits and pieces of the project 
 You can begin by either downloading a zip file of the project through github, or using a git command to clone the project by:
 
 ```bash
-git clone git@github.com:alisezer/flask-template.git
+git clone https://github.com/alisezer/flask-template.git
 ```
 
 ### Virtual Environment Setup
@@ -269,4 +269,3 @@ Many thanks to [Jose Rivera-Rubio](https://github.com/jmrr) for his help with th
 ### Todo and Improvements
 
 1. Add tests
-2. Add a create a story button on the main page
