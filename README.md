@@ -104,7 +104,7 @@ To use PostgreSQL locally, set `DATABASE_URL=postgresql+psycopg://user:pass@loca
 
 ## Docker
 
-`compose.yaml` runs a production-like stack: nginx → gunicorn → PostgreSQL 17.
+`compose.yaml` runs a production-like stack: nginx → gunicorn → PostgreSQL 18.
 
 ```bash
 echo "SECRET_KEY=$(python3 -c 'import secrets; print(secrets.token_hex(32))')" >> .env

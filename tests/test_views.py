@@ -89,10 +89,8 @@ def test_delete_story(client: FlaskClient, make_story) -> None:
     assert db.session.get(Story, story_id) is None
 
 
-def test_forms_require_csrf_outside_tests(tmp_path) -> None:
-    from app import create_app
-
-    app = create_app({"APP_ENV": "development", "DATABASE_URL": f"sqlite:///{tmp_path / 'x.db'}"})
+def test_forms_require_csrf_outside_tests(make_app) -> None:
+    app = make_app(APP_ENV="development")
     with app.app_context():
         db.create_all()
         response = app.test_client().post("/stories/new", data=FORM)

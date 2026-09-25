@@ -4,7 +4,7 @@
 
 services:
   proxy:
-    image: nginx:1.29-alpine
+    image: nginx:1.30-alpine
     ports:
       - "8080:80"
     volumes:
@@ -29,13 +29,13 @@ services:
     restart: unless-stopped
 
   db:
-    image: postgres:17-alpine
+    image: postgres:18-alpine
     environment:
       POSTGRES_USER: stories
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-stories}
       POSTGRES_DB: stories
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql  # Postgres 18+ keeps versioned data dirs here
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U stories -d stories"]
       interval: 5s
