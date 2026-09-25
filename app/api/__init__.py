@@ -1,10 +1,20 @@
-"""Initiates the API through Flask's blueprint"""
+"""JSON API blueprint, mounted at /api/v1. HTTP errors are rendered as JSON by `app.errors`."""
 
-from flask import Blueprint
-api = Blueprint('api', __name__)
+from typing import Any
 
-# This import might seem unconventional, however is required to register your
-# routes, which are created under the api folder. As you add more routes,
-# you should import them here so the app can pick it up.
+from flask import Blueprint, Response, jsonify
+from pydantic import ValidationError
 
-from app.api import stories
+api = Blueprint("api", __name__)
+
+
+@api.errorhandler(ValidationError)
+def handle_validation_error(error: ValidationError) -> tuple[Response, int]:
+    details: list[dict[str, Any]] = [
+        {"field": ".".join(str(p) for p in err["loc"]), "message": err["msg"]}
+        for err in error.errors(include_url=False)
+    ]
+    return jsonify(error="validation_error", details=details), 422
+
+
+from app.api import stories  # noqa: E402, F401  (registers routes)

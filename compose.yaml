@@ -1,0 +1,47 @@
+# Local production-like stack: nginx -> gunicorn/Flask -> PostgreSQL.
+#   docker compose up --build        then open http://localhost:8080
+# For day-to-day development `make dev` (Flask's reloader) is faster.
+
+services:
+  proxy:
+    image: nginx:1.29-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build: .
+    environment:
+      APP_ENV: ${APP_ENV:-production}
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env (see .env.example)}
+      DATABASE_URL: postgresql+psycopg://stories:${POSTGRES_PASSWORD:-stories}@db:5432/stories
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      # Behind nginx over plain HTTP locally; drop this line when TLS terminates in front.
+      SESSION_COOKIE_SECURE: "false"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: stories
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-stories}
+      POSTGRES_DB: stories
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U stories -d stories"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  db_data:

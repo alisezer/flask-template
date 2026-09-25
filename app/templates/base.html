@@ -1,63 +1,46 @@
-{% extends "bootstrap/base.html" %}
-
-
-{% block title %}Stories{% endblock %}
-
-{% block head %}
-
-{{ super() }}
-
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-
-{% endblock %}
-
-
-{% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
+<!doctype html>
+<html lang="en" data-bs-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Stories{% endblock %} · Stories</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <script>
+    // Follow the OS light/dark preference.
+    document.documentElement.dataset.bsTheme =
+      matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  </script>
+</head>
+<body class="d-flex flex-column min-vh-100">
+  <nav class="navbar navbar-expand border-bottom mb-4">
     <div class="container">
-
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">Stories</a>
-        </div>
-
-
-        <div class="navbar-collapse collapse">
-
-
-            <!-- Scheduler Nav Bar -->
-            <ul class="nav navbar-nav">
-                <li><a href="{{ url_for('main.create_story') }}">Create Story</a></li>
-            </ul>
-
-
-        </div>
+      <a class="navbar-brand fw-semibold" href="{{ url_for('main.index') }}">Stories</a>
+      <div class="navbar-nav ms-auto">
+        <a class="btn btn-primary btn-sm" href="{{ url_for('main.create_story') }}">New story</a>
+      </div>
     </div>
-</div>
-{% endblock %}
+  </nav>
 
-
-
-{% block content %}
-<div class="container">
-    {% for message in get_flashed_messages() %}
-    <div class="alert alert-warning">
-        <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <main class="container flex-grow-1">
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+      <div class="alert alert-{{ 'success' if category == 'success' else 'warning' }} alert-dismissible fade show"
+           role="alert">
         {{ message }}
-    </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
     {% endfor %}
 
-    {% block page_content %}{% endblock %}
-</div>
-{% endblock %}
+    {% block content %}{% endblock %}
+  </main>
 
-{% block scripts %}
-{{ super() }}
-{% endblock %}
+  <footer class="container py-4 text-body-secondary small">
+    Built with <a href="https://flask.palletsprojects.com/">Flask</a>.
+    JSON API at <code>/api/v1/stories/</code>.
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

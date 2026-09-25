@@ -1,20 +1,23 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% block title %}Create Story{% endblock %}
+{% from "_macros.html" import render_field %}
 
+{% block title %}{{ heading }}{% endblock %}
 
-{% block page_content %}
-<div class="page-header">
-    <h1>Create Story</h1>
-  </div>
+{% block content %}
+  <h1 class="h3 mb-4">{{ heading }}</h1>
 
-
-<div class="col-md-4">
-    {{ wtf.quick_form(form) }}
-</div>
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-
+  <form method="post" class="story-form" novalidate>
+    {{ form.hidden_tag() }}
+    {{ render_field(form.title) }}
+    <div class="row">
+      <div class="col-md">{{ render_field(form.topic) }}</div>
+      <div class="col-md">{{ render_field(form.author) }}</div>
+    </div>
+    {{ render_field(form.text) }}
+    <div class="d-flex gap-2">
+      {{ form.submit(class="btn btn-primary") }}
+      <a class="btn btn-link"
+         href="{{ url_for('main.story', story_id=story.id) if story else url_for('main.index') }}">Cancel</a>
+    </div>
+  </form>
 {% endblock %}

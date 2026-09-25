@@ -1,44 +1,79 @@
-"""This is where we create a function for initiating the application, which is
-later on used at the very top level stories.py module to initiate the
-application with a specific config file"""
+"""Application factory.
 
-# Flask Imports
-from flask_sqlalchemy import SQLAlchemy
-from flask_bootstrap import Bootstrap
-from flask_migrate import Migrate
+`flask --app app ...` and `gunicorn "app:create_app()"` both find `create_app` here.
+"""
+
+from typing import Any
+
+import click
 from flask import Flask
+from flask_migrate import upgrade
+from sqlalchemy import text
+from werkzeug.middleware.proxy_fix import ProxyFix
 
-# Importing configs
-from config import config_dict
-
-# Setup
-
-# We iniate the database and other packages that are going to play together
-# with the app here
-
-# For the database
-db = SQLAlchemy()
-# For database migrations
-migrate = Migrate()
-# For HTML bootstrapping
-bootstrap = Bootstrap()
+from app.config import Settings
+from app.errors import register_error_handlers
+from app.extensions import csrf, db, migrate
+from app.logging import configure_logging
 
 
-def create_app(config_key='local'):
+def create_app(overrides: dict[str, Any] | None = None) -> Flask:
+    """Build the app. `overrides` are settings (e.g. `{"APP_ENV": "testing"}`) used by tests."""
+    settings = Settings(**(overrides or {}))
+    configure_logging(settings.LOG_LEVEL.upper())
+
     app = Flask(__name__)
-    # Enabling config initiation
-    app.config.from_object(config_dict[config_key])
-    config_dict[config_key].init_app(app)
+    app.config.from_mapping(settings.flask_config())
+    # Trust X-Forwarded-* headers from the single reverse proxy (nginx) in front of us.
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)  # type: ignore[method-assign]
 
-    bootstrap.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
+    csrf.init_app(app)
 
-    # Registering the main and the api blueprints here
-    from app.main import main as main_blueprint
-    from app.api import api as api_blueprint
+    from app.api import api
+    from app.main import main
 
-    app.register_blueprint(main_blueprint)
-    app.register_blueprint(api_blueprint, url_prefix='/api/v1')
+    app.register_blueprint(main)
+    app.register_blueprint(api, url_prefix="/api/v1")
 
+    register_error_handlers(app)
+    register_health_check(app)
+    register_commands(app)
     return app
+
+
+def register_health_check(app: Flask) -> None:
+    @app.get("/healthz")
+    def healthz() -> tuple[dict[str, str], int]:
+        try:
+            db.session.execute(text("SELECT 1"))
+        except Exception:
+            app.logger.exception("Health check failed")
+            return {"status": "error", "database": "unreachable"}, 503
+        return {"status": "ok"}, 200
+
+
+def register_commands(app: Flask) -> None:
+    @app.cli.command()
+    def deploy() -> None:
+        """Run deployment tasks (apply database migrations)."""
+        upgrade()
+
+    @app.cli.command()
+    @click.option("--count", default=5, show_default=True, help="Number of stories to create.")
+    def seed(count: int) -> None:
+        """Fill the database with sample stories."""
+        from app.models import Story
+
+        db.session.add_all(
+            Story(
+                title=f"Sample story {i}",
+                topic="Examples",
+                author="Flask Template",
+                text=f"This is sample story number {i}. Edit or delete it from the web UI.",
+            )
+            for i in range(1, count + 1)
+        )
+        db.session.commit()
+        click.echo(f"Created {count} stories.")

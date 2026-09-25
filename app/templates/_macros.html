@@ -1,0 +1,38 @@
+{% macro render_field(field) %}
+  <div class="mb-3">
+    {{ field.label(class="form-label") }}
+    {% set classes = "form-control" ~ (" is-invalid" if field.errors else "") %}
+    {% if field.type == "TextAreaField" %}
+      {{ field(class=classes, rows=10) }}
+    {% else %}
+      {{ field(class=classes) }}
+    {% endif %}
+    {% for error in field.errors %}
+      <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+  </div>
+{% endmacro %}
+
+{% macro render_pagination(pagination, endpoint) %}
+  {% if pagination.pages > 1 %}
+    <nav aria-label="Pages">
+      <ul class="pagination">
+        <li class="page-item {{ 'disabled' if not pagination.has_prev }}">
+          <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev_num) }}">Previous</a>
+        </li>
+        {% for page in pagination.iter_pages() %}
+          {% if page %}
+            <li class="page-item {{ 'active' if page == pagination.page }}">
+              <a class="page-link" href="{{ url_for(endpoint, page=page) }}">{{ page }}</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">…</span></li>
+          {% endif %}
+        {% endfor %}
+        <li class="page-item {{ 'disabled' if not pagination.has_next }}">
+          <a class="page-link" href="{{ url_for(endpoint, page=pagination.next_num) }}">Next</a>
+        </li>
+      </ul>
+    </nav>
+  {% endif %}
+{% endmacro %}

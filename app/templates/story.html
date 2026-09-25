@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ story.title }}{% endblock %}
+
+{% block content %}
+  <article class="story">
+    <p class="text-body-secondary mb-1">
+      <span class="badge text-bg-secondary">{{ story.topic }}</span>
+    </p>
+    <h1 class="h2">{{ story.title }}</h1>
+    <p class="text-body-secondary">
+      By {{ story.author }} · {{ story.created_at.strftime("%d %b %Y, %H:%M") }}
+    </p>
+    <div class="story-text mb-4">{{ story.text }}</div>
+  </article>
+
+  <div class="d-flex gap-2">
+    <a class="btn btn-outline-primary" href="{{ url_for('main.edit_story', story_id=story.id) }}">Edit</a>
+    <form method="post" action="{{ url_for('main.delete_story', story_id=story.id) }}"
+          onsubmit="return confirm('Delete this story?');">
+      {{ delete_form.hidden_tag() }}
+      <button type="submit" class="btn btn-outline-danger">Delete</button>
+    </form>
+    <a class="btn btn-link ms-auto" href="{{ url_for('main.index') }}">Back to all stories</a>
+  </div>
+{% endblock %}

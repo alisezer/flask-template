@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ error.code }} {{ error.name }}{% endblock %}
+
+{% block content %}
+  <div class="text-center py-5">
+    <p class="display-4 text-body-secondary">{{ error.code }}</p>
+    <h1 class="h3">{{ error.name }}</h1>
+    <p class="text-body-secondary">{{ error.description }}</p>
+    <a class="btn btn-primary" href="{{ url_for('main.index') }}">Back to stories</a>
+  </div>
+{% endblock %}

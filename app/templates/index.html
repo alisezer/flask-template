@@ -1,36 +1,32 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+{% from "_macros.html" import render_pagination %}
 
-<title>{% block title %}STORIES{% endblock %}</title>
+{% block title %}All stories{% endblock %}
 
-{% block page_content %}
+{% block content %}
+  <h1 class="h3 mb-4">Stories</h1>
 
-<div class="page-header">
-  <h1>Stories</h1>
-</div>
-
-
-<div class="container">
-    <ul class="stories">
-        {% for story in stories %}
-        <li class="stories">
-            <div class="story-content">
-                <div class="story-title">
-                    <h3>{{story.title}}</h3>
-                    <p>Topic: {{story.topic}}</p>
-                    <p>Author: {{story.author}}</p>
-                    <p>Created At: {{story.created_at}}</p>
-                    <p>>>>{{story.text}}</p>
-                </div>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
-</div>
-
-{% endblock %}
-
-{% block scripts %}
-{{ super() }}
-
+  {% if pagination.items %}
+    <div class="list-group mb-4">
+      {% for story in pagination.items %}
+        <a class="list-group-item list-group-item-action py-3"
+           href="{{ url_for('main.story', story_id=story.id) }}">
+          <div class="d-flex justify-content-between align-items-baseline gap-3">
+            <h2 class="h5 mb-1">{{ story.title }}</h2>
+            <small class="text-body-secondary text-nowrap">
+              {{ story.created_at.strftime("%d %b %Y") }}
+            </small>
+          </div>
+          <p class="mb-1 text-body-secondary story-excerpt">{{ story.text }}</p>
+          <small>{{ story.author }} · <span class="badge text-bg-secondary">{{ story.topic }}</span></small>
+        </a>
+      {% endfor %}
+    </div>
+    {{ render_pagination(pagination, "main.index") }}
+  {% else %}
+    <div class="text-center py-5 text-body-secondary">
+      <p>No stories yet.</p>
+      <a class="btn btn-primary" href="{{ url_for('main.create_story') }}">Write the first one</a>
+    </div>
+  {% endif %}
 {% endblock %}

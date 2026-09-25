@@ -1,65 +1,55 @@
-## Install Python Dependencies
-requirements:
-	venv/bin/pip install -r requirements.txt
+.DEFAULT_GOAL := help
+FLASK := uv run flask --app app
 
-## Generate Requirements.txt
-generate-req:
-	venv/bin/pip freeze > requirements.txt
+.PHONY: help
+help: ## Show this help
+	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  \033[36m%-12s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-## Delete all compiled Python files
-clean: clean-tox clean-build clean-pyc
+.PHONY: install
+install: ## Install dependencies and git hooks
+	uv sync
+	uv run pre-commit install
 
-clean-build:
-	rm -fr build/
-	rm -fr dist/
-	rm -fr *.egg-info
+.PHONY: dev
+dev: ## Run the dev server with auto-reload on http://127.0.0.1:5000
+	$(FLASK) run --debug
 
-clean-pyc:
-	find . -type d -name '__pycache__' -exec rm -rf {} +
-	find . -type f -name '*.py[co]' -exec rm -f {} +
-	find . -name '*~' -exec rm -f {} +
+.PHONY: test
+test: ## Run the test suite with coverage
+	uv run pytest --cov
 
-clean-tox:
-	rm -rf .tox/
+.PHONY: lint
+lint: ## Lint, check formatting and type-check
+	uv run ruff check .
+	uv run ruff format --check .
+	uv run mypy
 
-# Self Documenting Commands
-.DEFAULT_GOAL := show-help
-.PHONY: show-help
-show-help:
-	@echo "$$(tput bold)Available rules:$$(tput sgr0)"
-	@echo
-	@sed -n -e "/^## / { \
-		h; \
-		s/.*//; \
-		:doc" \
-		-e "H; \
-		n; \
-		s/^## //; \
-		t doc" \
-		-e "s/:.*//; \
-		G; \
-		s/\\n## /---/; \
-		s/\\n/ /g; \
-		p; \
-	}" ${MAKEFILE_LIST} \
-	| LC_ALL='C' sort --ignore-case \
-	| awk -F '---' \
-		-v ncol=$$(tput cols) \
-		-v indent=19 \
-		-v col_on="$$(tput setaf 6)" \
-		-v col_off="$$(tput sgr0)" \
-	'{ \
-		printf "%s%*s%s ", col_on, -indent, $$1, col_off; \
-		n = split($$2, words, " "); \
-		line_length = ncol - indent; \
-		for (i = 1; i <= n; i++) { \
-			line_length -= length(words[i]) + 1; \
-			if (line_length <= 0) { \
-				line_length = ncol - indent - length(words[i]) - 1; \
-				printf "\n%*s ", -indent, " "; \
-			} \
-			printf "%s ", words[i]; \
-		} \
-		printf "\n"; \
-	}' \
-	| more $(shell test $(shell uname) == Darwin && echo '--no-init --raw-control-chars')
+.PHONY: fmt
+fmt: ## Auto-format and fix lint issues
+	uv run ruff format .
+	uv run ruff check --fix .
+
+.PHONY: migrate
+migrate: ## Apply database migrations
+	$(FLASK) db upgrade
+
+.PHONY: migration
+migration: ## Create a migration from model changes: make migration m="add foo"
+	$(FLASK) db migrate -m "$(m)"
+
+.PHONY: seed
+seed: ## Add sample stories to the database
+	$(FLASK) seed
+
+.PHONY: up
+up: ## Start the Docker stack (nginx + app + Postgres) on http://localhost:8080
+	docker compose up --build
+
+.PHONY: down
+down: ## Stop the Docker stack
+	docker compose down
+
+.PHONY: clean
+clean: ## Remove caches and build artefacts
+	rm -rf .pytest_cache .mypy_cache .ruff_cache .coverage htmlcov
+	find . -type d -name __pycache__ -not -path './.venv/*' -exec rm -rf {} +

@@ -1,19 +1,23 @@
-"""Create a form for creating stories"""
+"""Web forms."""
 
-from wtforms.validators import DataRequired, Length
 from flask_wtf import FlaskForm
-from wtforms import (
-    StringField,
-    TextAreaField,
-    SubmitField,
-)
-
-standard_validators = [DataRequired(), Length(0, 255)]
+from wtforms import StringField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, Length
 
 
-class StoryForm(FlaskForm):
-    title = StringField('Title', validators=standard_validators)
-    topic = StringField('Topic', validators=standard_validators)
-    text = TextAreaField('Story', validators=[DataRequired()])
-    author = StringField('Author', validators=standard_validators)
-    submit = SubmitField('Submit')
+def strip(value: str | None) -> str | None:
+    return value.strip() if isinstance(value, str) else value
+
+
+class StoryForm(FlaskForm):  # type: ignore[misc]
+    title = StringField("Title", validators=[DataRequired(), Length(max=255)], filters=[strip])
+    topic = StringField("Topic", validators=[DataRequired(), Length(max=255)], filters=[strip])
+    author = StringField("Author", validators=[DataRequired(), Length(max=255)], filters=[strip])
+    text = TextAreaField("Story", validators=[DataRequired()], filters=[strip])
+    submit = SubmitField("Save")
+
+
+class DeleteForm(FlaskForm):  # type: ignore[misc]
+    """Empty form: exists only to carry the CSRF token for delete buttons."""
+
+    submit = SubmitField("Delete")
